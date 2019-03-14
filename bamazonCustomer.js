@@ -11,17 +11,50 @@ const connection = mysql.createConnection({
 
 connection.connect(function(err) {
     if(err) throw err;
-    fullQuery();
-    connection.end(function(err) {
-        if(err) throw err;
-    })
+    //fullQuery();
+    buyItem();
 })
 
 function fullQuery () {
     connection.query('Select * from products', function(err, data) {
         if(err) throw err;
-        console.log(
-            data
-        )
+        console.log(data);
     })
 }
+
+function buyItem () {
+    inquirer.prompt(
+        [{
+            name: "id",
+            type: "input",
+            message: "What ID # is the item you want to purchase?"
+        },
+        {
+            name: "quantity",
+            type: "input",
+            message: "How many do you want to purchase?"
+        }]
+        ).then(function(response) {
+            console.log(response);
+            connection.query("SELECT stock_quantity FROM products WHERE item_id = ?", [response.id], function (err,data) {
+                if(err) throw err;
+                console.log(data[0].stock_quantity);
+                console.log(response.quantity);
+                if(data[0].stock_quantity >= response.quantity) {
+                    var newQuantity = parseInt(data[0].stock_quantity) - parseInt(response.quantity);
+                    connection.query("UPDATE products SET stock_quantity = ? WHERE item_id = ?", [newQuantity,response.id], function(err,data) {
+                        if(err) throw err;
+                        console.log("Purchase Complete! Thank you.");
+                    });
+                } else {
+                    console.log("Insufficient Quantity!");
+                    return;
+                }
+                connection.end(function(err) {
+                    if(err) throw err;
+                })
+            })
+        })
+}
+
+
