@@ -15,12 +15,12 @@ connection.connect(function(err) {
     buyItem();
 })
 
-function fullQuery () {
-    connection.query('Select * from products', function(err, data) {
-        if(err) throw err;
-        console.log(data);
-    })
-}
+// function fullQuery () {
+//     connection.query('Select * from products', function(err, data) {
+//         if(err) throw err;
+//         console.log(data);
+//     })
+// }
 
 function buyItem () {
     inquirer.prompt(
@@ -35,11 +35,8 @@ function buyItem () {
             message: "How many do you want to purchase?"
         }]
         ).then(function(response) {
-            console.log(response);
             connection.query("SELECT stock_quantity FROM products WHERE item_id = ?", [response.id], function (err,data) {
                 if(err) throw err;
-                console.log(data[0].stock_quantity);
-                console.log(response.quantity);
                 if(data[0].stock_quantity >= response.quantity) {
                     var newQuantity = parseInt(data[0].stock_quantity) - parseInt(response.quantity);
                     connection.query("UPDATE products SET stock_quantity = ? WHERE item_id = ?", [newQuantity,response.id], function(err,data) {
