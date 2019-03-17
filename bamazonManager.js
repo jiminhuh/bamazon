@@ -37,5 +37,7 @@ function CheckItem () {
             type: "list",
             message: "Add New Product"
         }
-    ])
+    ]).then(function(res) {
+        
+    })
 }

@@ -45,7 +45,6 @@ function buyItem () {
                     });
                 } else {
                     console.log("Insufficient Quantity!");
-                    return;
                 }
                 connection.end(function(err) {
                     if(err) throw err;
